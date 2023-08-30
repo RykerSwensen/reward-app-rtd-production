@@ -1,0 +1,40 @@
+/* Author: Ryker Swensen
+Last Modified Date: 8/30/2023
+Owner: Nathan Birch & BYU-Idaho
+For Use By: BYU-Idaho Faculty and Teacher Assistants.
+Modyfing the code without the consent of the owner is prohibited and against the honor code. */
+
+/* This is the css style file for the edit page. */
+
+body{
+    background-image: linear-gradient(to right,  #2F80ED, #800080);
+}
+
+input[type="text"],
+input[type="email"],
+input[type="number"],
+input[type="file"],
+select {
+    width: 100%;
+    padding: 12px 20px;
+    margin: 8px 0;
+    display: inline-block;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+input[type="submit"] {
+    width: 100%;
+    background-color: #4CAF50;
+    color: white;
+    padding: 14px 20px;
+    margin: 8px 0;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+input[type="submit"] :hover {
+    background-color: #45a049;
+}

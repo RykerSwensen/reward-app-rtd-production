@@ -4,8 +4,8 @@ Owner: Nathan Birch & BYU-Idaho
 For Use By: BYU-Idaho Faculty and Teacher Assistants.
 Modyfing the code without the consent of the owner is prohibited and against the honor code. */
 
-/* This file is the tailwind configuration setup. */
+/* This is the css style file for the student header component. */
 
-@import "tailwindcss/base";
-@import "tailwindcss/components";
-@import "tailwindcss/utilities"; 
+.header input[type="text"] {
+    width: 60%;
+}

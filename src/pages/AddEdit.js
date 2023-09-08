@@ -6,14 +6,15 @@
 
 // This file is the page to both add or edit a student
 
+// I left off on line 84 adding photo to prevent default
+
 // // Import necessary libraries.
-import fireDb, {storage, db} from '../firebase'
+import fireDb from '../firebase'
 import React, {useState, useEffect} from 'react'
 import { useNavigate , useParams } from 'react-router-dom'
 import './AddEdit.css'
 import { toast } from 'react-toastify'
-import { ref, uploadBytes, getDownloadURL, uploadBytesResumable} from "firebase/storage";
-import {ref as refren, push} from "firebase/database";
+
 
 // Initialize initial state.
 const initialState = {
@@ -23,15 +24,10 @@ const initialState = {
     course: '',
     email: '',
     points: '',
-    status: "",
 }
 
 // Create a function that will be used to add or edit a student.
 const AddEdit = () => {
-const [isLoading, setIsLoading] = useState(false);
-const [selectedImages, setSelectedImages] = useState([]);
-const [image, setImage] = useState(null);
-const [url, setUrl] = useState("");
 const [state, setState] = useState(initialState);
 const [data, setData] = useState({});
 const {fName, lName, photo, course, email, points, status} = state;
@@ -39,6 +35,7 @@ const [selectedImageNames, setSelectedImageNames] = useState([]);
 const [file, setFile] = useState(null);
 const [progress, setProgress] = useState(0);
 const navigate = useNavigate();
+const [baseImage, setBaseImage] = useState("");
 
 // Handle input change
 const handleInputChange = (e) => {
@@ -47,43 +44,44 @@ const handleInputChange = (e) => {
 };
 
 
+// I am no longer using firebase storage.
 // Upload file to storage.
-useEffect(() => {
-    const uploadFile = () => {
-        const name = new Date().getTime() + file.name;
-        const storageRef = ref(storage, `images/${name}`);
-        const uploadTask = uploadBytesResumable(storageRef, file);
-        uploadTask.on("state_changed", (snapshot) => {
-            const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-            setProgress(progress);
-            switch (snapshot.state) {
-                case "paused":
-                    console.log("Upload is paused");
-                    break;
-                case "running":
-                    console.log("Upload is running");
-                    break;
-                default:
-                    break;
-            }
-        }, (error) => {
-            console.log(error);
-        }, 
-        () => {
-            getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-                setData((prev) => ({...prev, photo: downloadURL}));
-            });
-        }
-         );
-    };
-    file && uploadFile();
-}, [file]);
+// useEffect(() => {
+//     const uploadFile = () => {
+//         const name = new Date().getTime() + file.name;
+//         const storageRef = ref(storage, `images/${name}`);
+//         const uploadTask = uploadBytesResumable(storageRef, file);
+//         uploadTask.on("state_changed", (snapshot) => {
+//             const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+//             setProgress(progress);
+//             switch (snapshot.state) {
+//                 case "paused":
+//                     console.log("Upload is paused");
+//                     break;
+//                 case "running":
+//                     console.log("Upload is running");
+//                     break;
+//                 default:
+//                     break;
+//             }
+//         }, (error) => {
+//             console.log(error);
+//         }, 
+//         () => {
+//             getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+//                 setData((prev) => ({...prev, photo: downloadURL}));
+//             });
+//         }
+//          );
+//     };
+//     file && uploadFile();
+// }, [file]);
 
 // Handle form submit
 const handleSubmit = (e) => {
-    const imageRef = ref(storage, "image");
+    // const imageRef = ref(storage, "image");
     e.preventDefault();
-        if( !fName || !lName || !course || !email || !points ) {
+        if( !photo || !fName || !lName || !course || !email || !points ) {
         toast.error('Please provide value in all fields');
     } else {
         if(!id) {
@@ -105,58 +103,88 @@ const handleSubmit = (e) => {
         }
          setTimeout(() => navigate('/'), 500);
     };
-    uploadBytes(imageRef, image).then(() => {
-        getDownloadURL(imageRef).then((url) => {
-            setUrl(url);
-    })
-    .catch((error) => {
-        console.log(error.message, "Error getting image URL");
-    });
-     setImage(null);
-    })
-    .catch((error) => {
-        console.log(error.message);
-    });
+    // uploadBytes(imageRef, image).then(() => {
+    //     getDownloadURL(imageRef).then((url) => {
+    //         setUrl(url);
+    // })
+    // .catch((error) => {
+    //     console.log(error.message, "Error getting image URL");
+    // });
+    //  setImage(null);
+    // })
+    // .catch((error) => {
+    //     console.log(error.message);
+    // });
+    
+    // const uploadImage = async (e) => {
+    //     const file = e.target.files[0];
+    //     const base64 = await convertBase64(file);
+    //     setBaseImage(base64);
+    //     console.log(baseImage);
+    //   };
+    
+    // const convertBase64 = (file) => {
+    // return new Promise((resolve, reject) => {
+    //     const fileReader = new FileReader();
+    //     fileReader.readAsDataURL(file);
+    
+    //     fileReader.onload = () => {
+    //         resolve(fileReader.result);
+    //     };
+    
+    //     fileReader.onerror = (error) => {
+    //         reject(error);
+    //     };
+    // });
+    // };
+    
+    // const sendBaseString = (e) => {
+    //     handleInputChange(e);
+    //     convertBase64(e);
+    // }
+
 };
 
+// No longer using firebase storage.
 // Handle image upload.
-const handleImageUpload = (e) => {
-    const files = e.target.files;
-    const updatedSelectedImages = [];
-    const updatedSelectedImagesNames = [];
-    for (let i = 0; i < files.length; i++) {
-        updatedSelectedImages.push(files[i]);
-        updatedSelectedImagesNames.push(files[i].name);
-    }
-    setSelectedImages(updatedSelectedImages);
-    setSelectedImageNames(updatedSelectedImagesNames);
-};
+// const handleImageUpload = (e) => {
+//     const files = e.target.files;
+//     const updatedSelectedImages = [];
+//     const updatedSelectedImagesNames = [];
+//     for (let i = 0; i < files.length; i++) {
+//         updatedSelectedImages.push(files[i]);
+//         updatedSelectedImagesNames.push(files[i].name);
+//     }
+//     setSelectedImages(updatedSelectedImages);
+//     setSelectedImageNames(updatedSelectedImagesNames);
+// };
 
+// No longer using firebase storage
 // Handle upload.
-const handleUpload = async () => {
-    setIsLoading(true);
-    if (selectedImages.length > 0) {
-        for (let i = 0; i < selectedImages.length; i++) {
-            const image = selectedImages[i];
-            const imageRef = ref(storage, image.name);
-            try {
-                const snapshot = await uploadBytes(imageRef, image);
-                const downloadUrl = await getDownloadURL(snapshot.ref);
+// const handleUpload = async () => {
+//     setIsLoading(true);
+//     if (selectedImages.length > 0) {
+//         for (let i = 0; i < selectedImages.length; i++) {
+//             const image = selectedImages[i];
+//             const imageRef = ref(storage, image.name);
+//             try {
+//                 const snapshot = await uploadBytes(imageRef, image);
+//                 const downloadUrl = await getDownloadURL(snapshot.ref);
 
-                const imagesRef = refren(db, "images");
-                push(imagesRef, {imageUrl:downloadUrl, timestamp: new Date().getTime()});
-                console.log("Image uploaded successfully");
-                setIsLoading(false);
-            } catch (e) {
-                setIsLoading(false);
-                console.log('error uploading image: ', e);
-            }
-        }
-    } else {
-        console.log("No images selected");
-        setIsLoading(false);
-    }
-}
+//                 const imagesRef = refren(db, "images");
+//                 push(imagesRef, {imageUrl:downloadUrl, timestamp: new Date().getTime()});
+//                 console.log("Image uploaded successfully");
+//                 setIsLoading(false);
+//             } catch (e) {
+//                 setIsLoading(false);
+//                 console.log('error uploading image: ', e);
+//             }
+//         }
+//     } else {
+//         console.log("No images selected");
+//         setIsLoading(false);
+//     }
+// }
 
 // Get the id from the url.
 const {id} = useParams();
@@ -185,15 +213,42 @@ useEffect(() => {
     }
 }, [id, data]);
 
+const uploadImage = async (e) => {
+    const file = e.target.files[0];
+    const base64 = await convertBase64(file);
+    setBaseImage(base64);
+    console.log(baseImage);
+  };
+
+const convertBase64 = (file) => {
+return new Promise((resolve, reject) => {
+    const fileReader = new FileReader();
+    fileReader.readAsDataURL(file);
+
+    fileReader.onload = () => {
+        resolve(fileReader.result);
+    };
+
+    fileReader.onerror = (error) => {
+        reject(error);
+    };
+});
+};
+
+const sendBaseString = (e) => {
+    handleSubmit(e);
+    convertBase64(e);
+}
+
 
 // Return the form.
   return (
     <div style={{marginTop: "100px"}}>
-        <form stle={{margin: "auto", padding: "15px", maxWidth: "400px", alignContent: "center",}} onSubmit={handleSubmit}>
+        <form stle={{margin: "auto", padding: "15px", maxWidth: "400px", alignContent: "center",}}>
 
             {/* Photos */}
             <label htmlFor="photo">Photo</label>
-            <input type="file" id="photo" name="photo"  alt="Base64 Image" placeholder="Base64 Photo" onChange={handleImageUpload} />
+            <input type="file" id="photo" name="photo"  alt="Base64 Image" placeholder="Base64 Photo" onChange={uploadImage} />
 
             {/* First Name */}
             <label htmlFor="fName">First Name</label>
@@ -222,7 +277,8 @@ useEffect(() => {
             </select>
 
             {/* Submit */}
-            <input type="submit" value={id ? "Update" : "Add Student"} onClick={handleUpload} />
+            <input type="submit" value={id ? "Update" : "Add Student"} onClick={sendBaseString} />
+            <img src={baseImage} height="200px" />
         </form>
     </div>
   )
@@ -230,3 +286,4 @@ useEffect(() => {
 
 // Export the AddEdit function.
 export default AddEdit
+

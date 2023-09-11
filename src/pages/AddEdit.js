@@ -81,14 +81,16 @@ const handleInputChange = (e) => {
 const handleSubmit = (e) => {
     // const imageRef = ref(storage, "image");
     e.preventDefault();
-        if( !photo || !fName || !lName || !course || !email || !points ) {
+        if(!fName || !lName || !course || !email || !points ) {
         toast.error('Please provide value in all fields');
     } else {
         if(!id) {
+            
             fireDb.child('students').push(state, (err) => {
                 if(err) {
                     toast.error(err)
                 } else {
+                    console.log(state);
                     toast.success('Student added successfully')
                 }
             });
@@ -237,6 +239,7 @@ return new Promise((resolve, reject) => {
 
 const sendBaseString = (e) => {
     handleSubmit(e);
+    uploadImage(e);
     convertBase64(e);
 }
 
@@ -244,11 +247,11 @@ const sendBaseString = (e) => {
 // Return the form.
   return (
     <div style={{marginTop: "100px"}}>
-        <form stle={{margin: "auto", padding: "15px", maxWidth: "400px", alignContent: "center",}}>
+        <form stle={{margin: "auto", padding: "15px", maxWidth: "400px", alignContent: "center",}} >
 
             {/* Photos */}
             <label htmlFor="photo">Photo</label>
-            <input type="file" id="photo" name="photo"  alt="Base64 Image" placeholder="Base64 Photo" onChange={uploadImage} />
+            <input type="file" id="photo" name="photo"  alt="Base64 Image" placeholder="Base64 Photo" onChange={sendBaseString} />
 
             {/* First Name */}
             <label htmlFor="fName">First Name</label>
@@ -277,7 +280,8 @@ const sendBaseString = (e) => {
             </select>
 
             {/* Submit */}
-            <input type="submit" value={id ? "Update" : "Add Student"} onClick={sendBaseString} />
+            <input type="submit" value={id ? "Update" : "Add Student"} onClick={handleSubmit} />
+            
             <img src={baseImage} height="200px" />
         </form>
     </div>
